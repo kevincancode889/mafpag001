@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 
+// Log the MongoDB URI to see if it's correctly set
+console.log('MONGODB_URI:', process.env.MONGODB_URI);
+
 // Connect to MongoDB Atlas using the connection string from the environment variable
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB Atlas'))
