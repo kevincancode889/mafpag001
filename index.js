@@ -27,6 +27,8 @@ app.get('/', async (req, res) => {
             return res.status(400).send('Missing customId parameter');
         }
 
+        // Log database connection details
+        console.log('Connecting to database:', process.env.MONGODB_URI);
         const redirectDoc = await Redirect.findOne({ customId: customId });
 
         if (redirectDoc) {
