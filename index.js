@@ -2,9 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 
-// Connect to MongoDB
+// Connect to MongoDB Atlas using the connection string from the environment variable
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
+  .then(() => console.log('Connected to MongoDB Atlas'))
   .catch(err => console.log('Error connecting to MongoDB:', err));
 
 // Define the schema for redirects, including a custom ID field
@@ -41,6 +41,7 @@ app.get('/redirect_custom', async (req, res) => {
     }
 });
 
+// Start the server on port 3000
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
 });
