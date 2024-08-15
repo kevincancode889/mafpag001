@@ -2,9 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 
-// Log the MongoDB URI to see if it's correctly set
-console.log('MONGODB_URI:', process.env.MONGODB_URI);
-
 // Connect to MongoDB Atlas using the connection string from the environment variable
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB Atlas'))
@@ -19,28 +16,32 @@ const redirectSchema = new mongoose.Schema({
 // Create a model based on the schema
 const Redirect = mongoose.model('Redirect', redirectSchema);
 
-// Route to handle redirection based on the custom ID and log UTM parameters
-app.get('/redirect_custom', async (req, res) => {
+// Route to handle redirection using the root URL '/'
+app.get('/', async (req, res) => {
     try {
         const customId = req.query.redirect_mongo_id;  // Extract custom ID from query parameters
-        const utmSource = req.query.utm_source;        // Extract UTM parameters
-        const utmMedium = req.query.utm_medium;
-        const utmCampaign = req.query.utm_campaign;
+        console.log('Received customId:', customId);  // Log the customId received
 
-        // Find the document based on custom ID
+        if (!customId) {
+            return res.status(400).send('Missing customId parameter');
+        }
+
         const redirectDoc = await Redirect.findOne({ customId: customId });
 
         if (redirectDoc) {
+            console.log('Redirect document found:', redirectDoc);
             // Log UTM parameters
-            console.log(`Redirected with UTM - Source: ${utmSource}, Medium: ${utmMedium}, Campaign: ${utmCampaign}`);
+            console.log(`Redirected with UTM - Source: ${req.query.utm_source}, Medium: ${req.query.utm_medium}, Campaign: ${req.query.utm_campaign}`);
             
             // Redirect to the URL specified in the document
-            res.redirect(redirectDoc.url);
+            return res.redirect(redirectDoc.url);
         } else {
-            res.status(404).send('Redirect ID not found');
+            console.log('No document found for customId:', customId);
+            return res.status(404).send('Redirect ID not found');
         }
     } catch (err) {
-        res.status(500).send('Server Error');
+        console.error('Error occurred:', err);
+        return res.status(500).send('Server Error');
     }
 });
 
