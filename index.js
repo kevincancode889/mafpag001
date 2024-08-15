@@ -19,6 +19,7 @@ const Redirect = mongoose.model('Redirect', redirectSchema);
 // Route to handle redirection using the root URL '/'
 app.get('/', async (req, res) => {
     try {
+        console.log('Query Object:', req.query);  // Log the entire query object
         const customId = req.query.redirect_mongo_id;  // Extract custom ID from query parameters
         console.log('Received customId:', customId);  // Log the customId received
 
